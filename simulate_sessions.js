@@ -50,6 +50,7 @@ function timeSince(time) {
 
         if (Math.random() < probability) {
             ++nRequests;
+            console.log('Sending request');
             axios.get('http://localhost:5000/');
         }
 
