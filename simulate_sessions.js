@@ -25,19 +25,35 @@ async function startSession(sessionLengthInMinutes) {
     }
 }
 
+function requestsPerMinute(minute) {
+    return 25;
+}
+
+function timeSince(time) {
+    return now().subtract(time);
+}
 
 (async () => {
     const SIMULATION_LENGTH_IN_MINUTES = 10;
-    const SESSIONS_PER_PIVOT = 1;
 
-    const simulationEndTime = now().add(SIMULATION_LENGTH_IN_MINUTES, 'minutes');
+    const simulationStartTime = now();
+    const simulationEndTime = simulationStartTime
+        .clone()
+        .add(SIMULATION_LENGTH_IN_MINUTES, 'minutes');
     const promises = [];
 
+    let nRequests = 0;
     while (now().isBefore(simulationEndTime)) {
-        for (let i = 0; i < SESSIONS_PER_PIVOT; ++i) {
-            promises.push(startSession(5));
+        const minute = timeSince(simulationStartTime).minutes();
+
+        const probability = requestsPerMinute(minute) / 60;
+
+        if (Math.random() < probability) {
+            ++nRequests;
+            axios.get('http://localhost:5000/');
         }
-        await sleep(10);
+
+        await sleep(1);
     }
 
     await Promise.all(promises);
