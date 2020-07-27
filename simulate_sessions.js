@@ -6,9 +6,9 @@ function now() {
     return new moment();
 }
 
-async function sleep(seconds) {
+async function sleep(milliseconds) {
     return new Promise((resolve) => {
-        setTimeout(resolve, seconds * 1000);
+        setTimeout(resolve, milliseconds);
     })
 }
 
@@ -26,11 +26,15 @@ async function startSession(sessionLengthInMinutes) {
 }
 
 function requestsPerMinute(minute) {
-    return 25;
+    const BASE_TRAFFIC_PER_MINUTE = 30;
+
+    const trafficMultiplier = -Math.cos(4 * minute / Math.PI) + 2;
+
+    return trafficMultiplier * BASE_TRAFFIC_PER_MINUTE;
 }
 
-function timeSince(time) {
-    return now().subtract(time);
+function secondsSince(time) {
+    return now().diff(time, 'seconds');
 }
 
 (async () => {
@@ -43,18 +47,19 @@ function timeSince(time) {
     const promises = [];
 
     let nRequests = 0;
-    while (now().isBefore(simulationEndTime)) {
-        const minute = timeSince(simulationStartTime).minutes();
+    const TICKS_PER_SECONDS = 1000;
 
-        const probability = requestsPerMinute(minute) / 60;
+    while (now().isBefore(simulationEndTime)) {
+        const minute = secondsSince(simulationStartTime) / 60;
+        const probability = requestsPerMinute(minute) / (TICKS_PER_SECONDS * 60);
 
         if (Math.random() < probability) {
             ++nRequests;
-            console.log('Sending request');
+            console.log('Sending request', minute, nRequests);
             axios.get('http://localhost:5000/');
         }
 
-        await sleep(1);
+        await sleep(1000 / TICKS_PER_SECONDS);
     }
 
     await Promise.all(promises);
