@@ -26,7 +26,7 @@ async function startSession(sessionLengthInMinutes) {
 }
 
 function requestsPerMinute(minute) {
-    const BASE_TRAFFIC_PER_MINUTE = 30;
+    const BASE_TRAFFIC_PER_MINUTE = 35;
 
     const trafficMultiplier = -Math.cos(4 * minute / Math.PI) + 2;
 
@@ -56,7 +56,7 @@ function secondsSince(time) {
         if (Math.random() < probability) {
             ++nRequests;
             console.log('Sending request', minute, nRequests);
-            axios.get('http://localhost:5000/');
+            axios.get('http://18.159.124.32:5000/');
         }
 
         await sleep(1000 / TICKS_PER_SECONDS);
