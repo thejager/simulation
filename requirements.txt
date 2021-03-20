@@ -8,7 +8,7 @@ Flask==1.1.2
 Flask-MonitoringDashboard==3.0.9
 idna==2.10
 itsdangerous==1.1.0
-Jinja2==2.11.1
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 numpy==1.19.0
 psutil==5.7.2
